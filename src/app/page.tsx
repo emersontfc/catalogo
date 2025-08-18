@@ -6,6 +6,10 @@ import Link from "next/link";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
+// Adicionando esta linha para desativar o cache de dados.
+// Isso garante que os dados mais recentes sejam sempre buscados do Firestore.
+export const revalidate = 0;
+
 // This function now fetches the configuration from Firestore.
 // It's a server-side function, ensuring data is fresh on every load.
 async function getHomePageConfig() {
