@@ -63,3 +63,5 @@ export const generateWhatsAppLink = (
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${businessPhoneNumber}?text=${encodedMessage}`;
 };
+
+    

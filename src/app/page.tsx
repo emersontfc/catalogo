@@ -17,7 +17,7 @@ async function getHomePageConfig() {
             // Default values if the document doesn't exist
             return {
                 slogan: 'Descubra o sabor da natureza em cada gole. Nossos sumos são feitos com ingredientes frescos e selecionados para energizar o seu dia.',
-                heroImageUrl: 'https://images.unsplash.com/photo-1505252585461-1b632da547ec?q=80&w=1974&auto=format&fit=crop',
+                heroImageUrl: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
             }
         }
     } catch (error) {
@@ -25,7 +25,7 @@ async function getHomePageConfig() {
         // Return default values in case of error
         return {
             slogan: 'Descubra o sabor da natureza em cada gole. Nossos sumos são feitos com ingredientes frescos e selecionados para energizar o seu dia.',
-            heroImageUrl: 'https://images.unsplash.com/photo-1505252585461-1b632da547ec?q=80&w=1974&auto=format&fit=crop',
+            heroImageUrl: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         }
     }
 }
@@ -36,26 +36,26 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
       <main className="flex-grow container mx-auto px-4">
-        <section className="grid md:grid-cols-2 gap-8 items-center py-12 md:py-24">
+        <section className="grid md:grid-cols-2 gap-12 items-center py-12 md:py-24">
           <div className="flex flex-col items-start text-center md:text-left">
-            <h1 className="text-4xl md:text-6xl font-extrabold font-headline text-primary leading-tight mb-4">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold font-headline text-primary leading-tight tracking-tight mb-4">
               Sumos Frescos, Vida Radiante.
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto md:mx-0">
               {config.slogan}
             </p>
-            <Button asChild size="lg" className="rounded-full">
+            <Button asChild size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-shadow mx-auto md:mx-0">
               <Link href="/menu">
                 Ver o Menu <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
-          <div className="relative w-full aspect-square max-w-lg mx-auto">
+          <div className="relative w-full aspect-square max-w-lg mx-auto group">
              <Image 
                 src={config.heroImageUrl || 'https://placehold.co/800x800.png'}
                 alt="Imagem de uma rodela de laranja" 
                 fill
-                className="object-cover rounded-full shadow-2xl"
+                className="object-cover rounded-full shadow-2xl transition-transform duration-500 group-hover:scale-105"
                 data-ai-hint="orange slice"
                 priority
               />

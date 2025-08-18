@@ -25,14 +25,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group">
       <CardHeader className="p-0">
-        <div className="relative aspect-square w-full">
+        <div className="relative aspect-square w-full overflow-hidden">
           <Image
             src={product.imageUrl}
             alt={product.name}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             data-ai-hint={`${product.category} juice`}
           />
@@ -45,7 +45,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </p>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button onClick={handleAddToCart} className="w-full bg-accent hover:bg-accent/90">
+        <Button onClick={handleAddToCart} className="w-full bg-accent hover:bg-accent/90 shadow-md hover:shadow-lg transition-shadow">
           <PlusCircle className="mr-2 h-5 w-5" />
           Adicionar ao Carrinho
         </Button>

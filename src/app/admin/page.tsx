@@ -163,6 +163,9 @@ const AdminDashboard = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const dataUrl = reader.result as string;
+                // For now, we'll store the data URL.
+                // In a real app, you'd upload this to a service like Firebase Storage
+                // and get a public URL back.
                 setHeroImageUrl(dataUrl);
                 setIsUploading(false);
             };
@@ -174,7 +177,10 @@ const AdminDashboard = () => {
   const saveHomepageConfig = async () => {
     const configRef = doc(db, 'config', 'homepage');
     try {
-        await setDoc(configRef, { slogan: slogan, heroImageUrl: heroImageUrl }, { merge: true });
+        await setDoc(configRef, { 
+            slogan: slogan,
+            heroImageUrl: heroImageUrl 
+        }, { merge: true });
         toast({
             title: 'Sucesso!',
             description: 'As configurações da página inicial foram atualizadas.',
@@ -200,9 +206,13 @@ const AdminDashboard = () => {
         
         let message = '';
         if (newStatus === 'preparing') {
-            message = `Olá ${order.customerName}! Seu pedido #${order.id.slice(0, 6)} da Drink It já está em preparação. Em breve estará pronto!`;
+            message = `Olá *${order.customerName}*! Seu pedido *#${order.id.slice(0, 6)}* da Drink It já está em preparação. Em breve estará pronto!`;
         } else if (newStatus === 'ready') {
-            message = `Olá ${order.customerName}! Seu pedido #${order.id.slice(0, 6)} da Drink It está pronto para ser levantado/entregue!`;
+            message = `Olá *${order.customerName}*! Seu pedido *#${order.id.slice(0, 6)}* da Drink It está pronto!\n\n` +
+                      `*Por favor, efetue o pagamento no levantamento* via M-Pesa, e-Mola ou em numerário para um dos seguintes contactos:\n\n` +
+                      `*856727539* (Gerson Joaquim Filipe Charles)\n` +
+                      `*869059082* (Gerson Joaquim Filipe Charles)\n\n` +
+                      `Agradecemos a sua preferência!`;
         }
 
         if (message) {
@@ -324,7 +334,7 @@ const AdminDashboard = () => {
       </div>
       
       <Tabs defaultValue="orders" className="w-full">
-        <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 md:w-1/2 mx-auto mb-8 h-auto">
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 sm:w-fit mx-auto mb-8 h-auto">
           <TabsTrigger value="orders" className="py-2 text-sm md:text-base">
             <History className="mr-2 h-4 w-4" /> Pedidos
           </TabsTrigger>
@@ -338,7 +348,7 @@ const AdminDashboard = () => {
         
         <TabsContent value="orders">
           <Tabs defaultValue="pending" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 md:w-1/2 mx-auto mb-8 h-auto">
+            <TabsList className="grid w-full grid-cols-3 sm:w-fit mx-auto mb-8 h-auto">
               <TabsTrigger value="pending" className="py-2 text-sm md:text-base">
                 <History className="mr-2 h-4 w-4" /> Pendentes
               </TabsTrigger>
@@ -381,7 +391,7 @@ const AdminDashboard = () => {
                 <CardHeader>
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <CardTitle>Gerenciar Produtos</CardTitle>
+                            <CardTitle className="text-xl md:text-2xl">Gerenciar Produtos</CardTitle>
                             <CardDescription>Adicione, edite ou remova os sumos do seu catálogo.</CardDescription>
                         </div>
                         <Button onClick={handleAddNewProduct} className="w-full md:w-auto">
@@ -470,18 +480,19 @@ const AdminDashboard = () => {
           <div className="space-y-8 max-w-2xl mx-auto">
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
                         <Home />
                         Página Inicial
                     </CardTitle>
                     <CardDescription>
-                      Personalize o conteúdo da página de boas-vindas.
+                      Personalize o conteúdo da página de boas-vindas, como o slogan e a imagem principal.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Slogan</label>
+                        <label htmlFor="slogan" className="text-sm font-medium">Slogan</label>
                         <Textarea
+                            id="slogan"
                             placeholder="Descreva sua loja em uma frase cativante..."
                             value={slogan}
                             onChange={(e) => setSlogan(e.target.value)}
@@ -489,8 +500,8 @@ const AdminDashboard = () => {
                             rows={3}
                         />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Imagem Principal</label>
+                     <div className="space-y-2">
+                         <label htmlFor="slogan" className="text-sm font-medium">Imagem Principal</label>
                          <div className="w-full h-64 border-2 border-dashed rounded-md flex items-center justify-center relative">
                             {isUploading ? (
                                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
@@ -511,7 +522,7 @@ const AdminDashboard = () => {
                               <div className="text-center text-muted-foreground">
                                 <ImageIcon className="mx-auto h-12 w-12" />
                                 <p>Arraste ou clique para carregar</p>
-                                <p className="text-xs">Tamanho recomendado: 800x800</p>
+                                <p className="text-xs">Tamanho máximo: 2MB</p>
                               </div>
                             )}
                              <input
@@ -535,7 +546,7 @@ const AdminDashboard = () => {
 
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
                         <Phone />
                         Configurações de Contato
                     </CardTitle>
@@ -549,7 +560,7 @@ const AdminDashboard = () => {
                       placeholder="Número de WhatsApp"
                       value={contactPhone}
                       onChange={handlePhoneChange}
-                      className="max-w-xs"
+                      className="max-w-xs text-base"
                     />
                     <Button onClick={saveContactPhone} className="w-full sm:w-auto">Salvar Contato</Button>
                 </CardContent>
