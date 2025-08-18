@@ -177,6 +177,7 @@ const AdminDashboard = () => {
   const saveHomepageConfig = async () => {
     const configRef = doc(db, 'config', 'homepage');
     try {
+        // We save the slogan and the heroImageUrl (which can be a URL or a data URI)
         await setDoc(configRef, { 
             slogan: slogan,
             heroImageUrl: heroImageUrl 
@@ -501,8 +502,8 @@ const AdminDashboard = () => {
                         />
                     </div>
                      <div className="space-y-2">
-                         <label htmlFor="slogan" className="text-sm font-medium">Imagem Principal</label>
-                         <div className="w-full h-64 border-2 border-dashed rounded-md flex items-center justify-center relative">
+                         <label htmlFor="image-url" className="text-sm font-medium">URL da Imagem Principal</label>
+                         <div className="w-full h-64 border-2 border-dashed rounded-md flex items-center justify-center relative bg-muted/50">
                             {isUploading ? (
                                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
                                     <Loader2 className="animate-spin h-8 w-8" />
@@ -519,10 +520,10 @@ const AdminDashboard = () => {
                                 </Button>
                               </>
                             ) : (
-                              <div className="text-center text-muted-foreground">
+                              <div className="text-center text-muted-foreground p-4">
                                 <ImageIcon className="mx-auto h-12 w-12" />
-                                <p>Arraste ou clique para carregar</p>
-                                <p className="text-xs">Tamanho máximo: 2MB</p>
+                                <p>Arraste uma imagem ou clique para carregar</p>
+                                <p className="text-xs mt-1">Tamanho máximo: 2MB</p>
                               </div>
                             )}
                              <input
@@ -534,6 +535,15 @@ const AdminDashboard = () => {
                                 disabled={isUploading}
                               />
                           </div>
+                          <Input
+                            id="image-url"
+                            type="text"
+                            placeholder="Ou cole uma URL de imagem aqui"
+                            value={heroImageUrl || ''}
+                            onChange={(e) => setHeroImageUrl(e.target.value)}
+                            disabled={isUploading}
+                            className="mt-2"
+                           />
                     </div>
                 </CardContent>
                 <CardFooter>

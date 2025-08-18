@@ -6,15 +6,22 @@ import Link from "next/link";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
+// This function now fetches the configuration from Firestore.
+// It's a server-side function, ensuring data is fresh on every load.
 async function getHomePageConfig() {
     try {
         const configRef = doc(db, 'config', 'homepage');
         const docSnap = await getDoc(configRef);
 
-        if (docSnap.exists() && docSnap.data().heroImageUrl) {
-            return docSnap.data();
+        if (docSnap.exists()) {
+            // If the document exists, return its data.
+            const data = docSnap.data();
+            return {
+                slogan: data.slogan || 'O sabor da natureza em cada gole.', // Fallback slogan
+                heroImageUrl: data.heroImageUrl || 'https://placehold.co/800x800.png', // Fallback image
+            }
         } else {
-            // Default values if the document doesn't exist
+            // Default values if the document doesn't exist at all
             return {
                 slogan: 'Descubra o sabor da natureza em cada gole. Nossos sumos são feitos com ingredientes frescos e selecionados para energizar o seu dia.',
                 heroImageUrl: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -22,7 +29,7 @@ async function getHomePageConfig() {
         }
     } catch (error) {
         console.error("Error fetching homepage config:", error);
-        // Return default values in case of error
+        // Return default values in case of any error during fetch
         return {
             slogan: 'Descubra o sabor da natureza em cada gole. Nossos sumos são feitos com ingredientes frescos e selecionados para energizar o seu dia.',
             heroImageUrl: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
