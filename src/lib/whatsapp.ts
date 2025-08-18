@@ -8,6 +8,12 @@ interface CustomerDetails {
 }
 
 const getBaseUrl = () => {
+    // Prioritize the production domain provided by the user.
+    const productionUrl = 'https://drinkit1.vercel.app';
+    if (productionUrl) {
+        return productionUrl;
+    }
+
     if (process.env.NEXT_PUBLIC_VERCEL_URL) {
         return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
     }
