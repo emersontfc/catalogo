@@ -226,6 +226,20 @@ const AdminDashboard = () => {
     }
   };
   
+    const handleDeleteOrder = async (orderId: string) => {
+        const orderRef = doc(db, 'orders', orderId);
+        try {
+            await deleteDoc(orderRef);
+            toast({
+                title: 'Pedido Removido!',
+                description: 'O pedido foi removido com sucesso.',
+            });
+        } catch (error) {
+            console.error("Error deleting order: ", error);
+            toast({ title: 'Erro!', description: 'Não foi possível remover o pedido.', variant: 'destructive' });
+        }
+    };
+
   const getFilteredOrders = (status: Order['status']) => {
     return orders
       .filter((order) => order.status === status)
@@ -301,37 +315,37 @@ const AdminDashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold font-headline text-primary">
+        <h1 className="text-3xl md:text-4xl font-bold font-headline text-primary">
           Painel do Administrador
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-md md:text-lg text-muted-foreground">
           {greeting}, Chefe Gerson! Gerencie os pedidos e produtos da sua loja.
         </p>
       </div>
       
       <Tabs defaultValue="orders" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:w-1/2 mx-auto mb-8">
-          <TabsTrigger value="orders">
+        <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 md:w-1/2 mx-auto mb-8 h-auto">
+          <TabsTrigger value="orders" className="py-2 text-sm md:text-base">
             <History className="mr-2 h-4 w-4" /> Pedidos
           </TabsTrigger>
-          <TabsTrigger value="products">
+          <TabsTrigger value="products" className="py-2 text-sm md:text-base">
             <Package className="mr-2 h-4 w-4" /> Produtos
           </TabsTrigger>
-          <TabsTrigger value="settings">
+          <TabsTrigger value="settings" className="py-2 text-sm md:text-base">
             <Settings className="mr-2 h-4 w-4" /> Configurações
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="orders">
           <Tabs defaultValue="pending" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 md:w-1/2 mx-auto mb-8">
-              <TabsTrigger value="pending">
+            <TabsList className="grid w-full grid-cols-3 md:w-1/2 mx-auto mb-8 h-auto">
+              <TabsTrigger value="pending" className="py-2 text-sm md:text-base">
                 <History className="mr-2 h-4 w-4" /> Pendentes
               </TabsTrigger>
-              <TabsTrigger value="preparing">
+              <TabsTrigger value="preparing" className="py-2 text-sm md:text-base">
                 <ChefHat className="mr-2 h-4 w-4" /> Em Preparo
               </TabsTrigger>
-              <TabsTrigger value="ready">
+              <TabsTrigger value="ready" className="py-2 text-sm md:text-base">
                 <Package className="mr-2 h-4 w-4" /> Prontos
               </TabsTrigger>
             </TabsList>
@@ -340,21 +354,21 @@ const AdminDashboard = () => {
                 <TabsContent key="pending" value="pending">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {getFilteredOrders('pending').map((order) => (
-                            <OrderCard key={order.id} order={order} onStatusChange={handleStatusChange} />
+                            <OrderCard key={order.id} order={order} onStatusChange={handleStatusChange} onDelete={handleDeleteOrder} />
                         ))}
                     </div>
                 </TabsContent>
                 <TabsContent key="preparing" value="preparing">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {getFilteredOrders('preparing').map((order) => (
-                            <OrderCard key={order.id} order={order} onStatusChange={handleStatusChange} />
+                            <OrderCard key={order.id} order={order} onStatusChange={handleStatusChange} onDelete={handleDeleteOrder} />
                         ))}
                     </div>
                 </TabsContent>
                 <TabsContent key="ready" value="ready">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {getFilteredOrders('ready').map((order) => (
-                            <OrderCard key={order.id} order={order} onStatusChange={handleStatusChange} />
+                            <OrderCard key={order.id} order={order} onStatusChange={handleStatusChange} onDelete={handleDeleteOrder} />
                         ))}
                     </div>
                 </TabsContent>
@@ -365,19 +379,19 @@ const AdminDashboard = () => {
         <TabsContent value="products">
             <Card>
                 <CardHeader>
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <CardTitle>Gerenciar Produtos</CardTitle>
                             <CardDescription>Adicione, edite ou remova os sumos do seu catálogo.</CardDescription>
                         </div>
-                        <Button onClick={handleAddNewProduct}>
+                        <Button onClick={handleAddNewProduct} className="w-full md:w-auto">
                             <PlusCircle className="mr-2 h-4 w-4" />
                             Adicionar Produto
                         </Button>
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div className="border rounded-md">
+                    <div className="border rounded-md overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -529,7 +543,7 @@ const AdminDashboard = () => {
                       Altere o número de telefone que receberá as mensagens dos pedidos no WhatsApp.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="flex items-center gap-4">
+                <CardContent className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                     <Input
                       type="tel"
                       placeholder="Número de WhatsApp"
@@ -537,7 +551,7 @@ const AdminDashboard = () => {
                       onChange={handlePhoneChange}
                       className="max-w-xs"
                     />
-                    <Button onClick={saveContactPhone}>Salvar Contato</Button>
+                    <Button onClick={saveContactPhone} className="w-full sm:w-auto">Salvar Contato</Button>
                 </CardContent>
             </Card>
           </div>
@@ -545,8 +559,8 @@ const AdminDashboard = () => {
       </Tabs>
 
       {isFormOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
-            <div className="bg-card rounded-lg shadow-xl w-full max-w-md relative">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+            <div className="bg-card rounded-lg shadow-xl w-full max-w-md relative max-h-full overflow-y-auto">
                 <Button variant="ghost" size="icon" className="absolute top-4 right-4" onClick={() => setIsFormOpen(false)}>
                     <X />
                 </Button>

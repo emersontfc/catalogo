@@ -2,16 +2,29 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, CookingPot, PackageCheck } from 'lucide-react';
+import { CheckCircle, Clock, CookingPot, PackageCheck, Trash2 } from 'lucide-react';
 import type { Order } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 interface OrderCardProps {
   order: Order;
   onStatusChange: (orderId: string, newStatus: Order['status']) => void;
+  onDelete: (orderId: string) => void;
 }
 
 const statusConfig: Record<Order['status'], { label: string; icon: JSX.Element; color: string; actions: Array<Order['status']> }> = {
@@ -48,7 +61,7 @@ const actionConfig: Record<string, { label: string; icon: JSX.Element; variant: 
     }
 }
 
-const OrderCard = ({ order, onStatusChange }: OrderCardProps) => {
+const OrderCard = ({ order, onStatusChange, onDelete }: OrderCardProps) => {
   const currentStatus = statusConfig[order.status];
 
   return (
@@ -88,8 +101,29 @@ const OrderCard = ({ order, onStatusChange }: OrderCardProps) => {
             <span>{order.total.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}</span>
           </div>
         </CardContent>
-        {currentStatus.actions.length > 0 && (
-          <CardFooter className="bg-muted/50 p-4 flex gap-2 justify-end mt-auto">
+        <CardFooter className="bg-muted/50 p-4 flex gap-2 justify-between items-center mt-auto">
+          <AlertDialog>
+              <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                      <Trash2 className="h-5 w-5" />
+                  </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                  <AlertDialogHeader>
+                      <AlertDialogTitle>Tem a certeza?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                          Esta ação não pode ser desfeita. Isto irá remover permanentemente o pedido.
+                      </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => onDelete(order.id)} className="bg-destructive hover:bg-destructive/90">
+                          Sim, remover
+                      </AlertDialogAction>
+                  </AlertDialogFooter>
+              </AlertDialogContent>
+          </AlertDialog>
+          <div className="flex gap-2 justify-end">
             {currentStatus.actions.map((action) => {
               const config = actionConfig[action];
               if (!config) return null;
@@ -104,8 +138,8 @@ const OrderCard = ({ order, onStatusChange }: OrderCardProps) => {
                   </Button>
               )
             })}
-          </CardFooter>
-        )}
+          </div>
+        </CardFooter>
       </Card>
     </motion.div>
   );

@@ -37,7 +37,7 @@ const AdminLoginPage = () => {
                         <div className="mx-auto bg-primary text-primary-foreground p-3 rounded-full w-fit mb-4">
                             <Lock className="h-6 w-6" />
                         </div>
-                        <CardTitle className="text-2xl font-headline">Acesso Restrito</CardTitle>
+                        <CardTitle className="text-xl md:text-2xl font-headline">Acesso Restrito</CardTitle>
                         <CardDescription>
                             Por favor, insira a senha para acessar o painel administrativo.
                         </CardDescription>

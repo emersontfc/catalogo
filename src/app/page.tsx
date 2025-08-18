@@ -11,13 +11,13 @@ async function getHomePageConfig() {
         const configRef = doc(db, 'config', 'homepage');
         const docSnap = await getDoc(configRef);
 
-        if (docSnap.exists()) {
+        if (docSnap.exists() && docSnap.data().heroImageUrl) {
             return docSnap.data();
         } else {
             // Default values if the document doesn't exist
             return {
                 slogan: 'Descubra o sabor da natureza em cada gole. Nossos sumos são feitos com ingredientes frescos e selecionados para energizar o seu dia.',
-                heroImageUrl: 'https://images.unsplash.com/photo-1601569927311-2856517445a4?q=80&w=1964&auto=format&fit=crop',
+                heroImageUrl: 'https://images.unsplash.com/photo-1505252585461-1b632da547ec?q=80&w=1974&auto=format&fit=crop',
             }
         }
     } catch (error) {
@@ -25,7 +25,7 @@ async function getHomePageConfig() {
         // Return default values in case of error
         return {
             slogan: 'Descubra o sabor da natureza em cada gole. Nossos sumos são feitos com ingredientes frescos e selecionados para energizar o seu dia.',
-            heroImageUrl: 'https://images.unsplash.com/photo-1601569927311-2856517445a4?q=80&w=1964&auto=format&fit=crop',
+            heroImageUrl: 'https://images.unsplash.com/photo-1505252585461-1b632da547ec?q=80&w=1974&auto=format&fit=crop',
         }
     }
 }
@@ -38,7 +38,7 @@ export default async function Home() {
       <main className="flex-grow container mx-auto px-4">
         <section className="grid md:grid-cols-2 gap-8 items-center py-12 md:py-24">
           <div className="flex flex-col items-start text-center md:text-left">
-            <h1 className="text-5xl md:text-6xl font-extrabold font-headline text-primary leading-tight mb-4">
+            <h1 className="text-4xl md:text-6xl font-extrabold font-headline text-primary leading-tight mb-4">
               Sumos Frescos, Vida Radiante.
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto md:mx-0">
@@ -53,10 +53,10 @@ export default async function Home() {
           <div className="relative w-full aspect-square max-w-lg mx-auto">
              <Image 
                 src={config.heroImageUrl || 'https://placehold.co/800x800.png'}
-                alt="Imagem de sumos vibrantes" 
+                alt="Imagem de uma rodela de laranja" 
                 fill
                 className="object-cover rounded-full shadow-2xl"
-                data-ai-hint="colorful juices"
+                data-ai-hint="orange slice"
                 priority
               />
           </div>
