@@ -1,14 +1,15 @@
+
 'use client';
 
 import type { ReactNode } from 'react';
 import React, from 'react';
-import type { CartItem, Product } from '@/lib/types';
+import type { CartItem, Product, Variation } from '@/lib/types';
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string | number) => void;
-  updateQuantity: (productId: string | number, quantity: number) => void;
+  addToCart: (product: Product, variation?: Variation) => void;
+  removeFromCart: (cartItemId: string) => void;
+  updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
   totalPrice: number;
   totalItems: number;
@@ -35,28 +36,42 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, variation?: Variation) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
+      // Create a unique ID for the cart item based on product ID and variation name
+      const cartItemId = variation ? `${product.id}_${variation.name}` : `${product.id}`;
+      
+      const existingItem = prevItems.find((item) => item.id === cartItemId);
+      
       if (existingItem) {
         return prevItems.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === cartItemId ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      
+      // If it's a new item, create it with the unique cart ID
+      const newItem: CartItem = {
+        ...product,
+        id: cartItemId, // Use the unique ID
+        price: variation ? variation.price : product.price,
+        variation: variation,
+        quantity: 1,
+      };
+      
+      return [...prevItems, newItem];
     });
   };
 
-  const removeFromCart = (productId: string | number) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
+  const removeFromCart = (cartItemId: string) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== cartItemId));
   };
 
-  const updateQuantity = (productId: string | number, quantity: number) => {
+  const updateQuantity = (cartItemId: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(cartItemId);
     } else {
       setCartItems((prevItems) =>
-        prevItems.map((item) => (item.id === productId ? { ...item, quantity } : item))
+        prevItems.map((item) => (item.id === cartItemId ? { ...item, quantity } : item))
       );
     }
   };

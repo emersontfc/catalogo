@@ -40,7 +40,7 @@ export const generateWhatsAppLink = (
   
   const adminLink = `${getBaseUrl()}/admin`;
 
-  let message = `Olá, Drink It! Gostaria de fazer um novo pedido.\n\n`;
+  let message = `*Olá, Drink It! Gostaria de fazer um novo pedido.*\n\n`;
   message += `*ID do Pedido:* ${orderId}\n`
   message += `*Data e Hora:* ${orderTime}\n\n`;
   message += `*Detalhes do Cliente:*\n`;
@@ -50,7 +50,8 @@ export const generateWhatsAppLink = (
   message += `*Itens do Pedido:*\n`;
 
   cartItems.forEach(item => {
-    message += `- ${item.quantity}x ${item.name} (${item.price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })})\n`;
+    const variationText = item.variation ? ` (${item.variation.name})` : '';
+    message += `- ${item.quantity}x ${item.name}${variationText} (${item.price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })})\n`;
   });
 
   message += `\n*Total:* *${totalPrice.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}*\n\n`;
@@ -58,10 +59,8 @@ export const generateWhatsAppLink = (
   message += `*Para o Administrador:*\n`;
   message += `Para gerenciar este pedido, acesse: ${adminLink}\n`;
   message += `-------\n\n`;
-  message += `Aguardo a confirmação do meu pedido. Obrigado!`;
+  message += `*Aguardo a confirmação do meu pedido. Obrigado!*`;
 
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${businessPhoneNumber}?text=${encodedMessage}`;
 };
-
-    

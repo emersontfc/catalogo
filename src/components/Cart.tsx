@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -17,6 +18,7 @@ import {
 import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
 import { CheckoutDialog } from './CheckoutDialog';
+import { Badge } from './ui/badge';
 
 interface CartProps {
   isOpen: boolean;
@@ -60,6 +62,9 @@ const Cart = ({ isOpen, onOpenChange }: CartProps) => {
                       </div>
                       <div className="flex-grow">
                         <h3 className="font-semibold">{item.name}</h3>
+                        {item.variation && (
+                            <Badge variant="secondary" className="mb-1">{item.variation.name}</Badge>
+                        )}
                         <p className="text-sm text-muted-foreground">
                           {item.price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}
                         </p>
@@ -68,7 +73,7 @@ const Cart = ({ isOpen, onOpenChange }: CartProps) => {
                             variant="outline"
                             size="icon"
                             className="h-7 w-7"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.id as string, item.quantity - 1)}
                           >
                             <Minus className="h-4 w-4" />
                           </Button>
@@ -77,7 +82,7 @@ const Cart = ({ isOpen, onOpenChange }: CartProps) => {
                             variant="outline"
                             size="icon"
                             className="h-7 w-7"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.id as string, item.quantity + 1)}
                           >
                             <Plus className="h-4 w-4" />
                           </Button>
@@ -87,7 +92,7 @@ const Cart = ({ isOpen, onOpenChange }: CartProps) => {
                         variant="ghost"
                         size="icon"
                         className="text-muted-foreground hover:text-destructive"
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.id as string)}
                       >
                         <Trash2 className="h-5 w-5" />
                       </Button>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -88,9 +89,9 @@ const OrderCard = ({ order, onStatusChange, onDelete }: OrderCardProps) => {
         <CardContent className="p-6 text-sm flex-grow">
           <p className="mb-3 font-semibold">Itens:</p>
           <ul className="space-y-2">
-            {order.items.map((item) => (
-              <li key={item.id} className="flex justify-between">
-                <span>{item.quantity}x {item.name}</span>
+            {order.items.map((item, index) => (
+              <li key={`${item.id}-${index}`} className="flex justify-between">
+                <span>{item.quantity}x {item.name} {item.variationName ? `(${item.variationName})` : ''}</span>
                 <span className="font-mono">{item.price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}</span>
               </li>
             ))}

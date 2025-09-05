@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -17,19 +17,27 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { type Product } from '@/lib/types';
-import { Upload, Image as ImageIcon, X, Loader2 } from 'lucide-react';
+import { type Product, type Variation } from '@/lib/types';
+import { Upload, Image as ImageIcon, X, Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from './ui/switch';
+import { Separator } from './ui/separator';
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+
+const variationSchema = z.object({
+  name: z.string().min(1, 'O nome da variação é obrigatório.'),
+  price: z.coerce.number().min(0, 'O preço deve ser um número positivo.'),
+});
+
 const formSchema = z.object({
   name: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres.'),
-  price: z.coerce.number().min(0, 'O preço deve ser um número positivo.'),
+  price: z.coerce.number().min(0, 'O preço base é obrigatório.'),
   category: z.string().min(3, 'A categoria é obrigatória.'),
   imageUrl: z.string().url('A imagem do produto é obrigatória.'),
   isAvailable: z.boolean().default(true),
+  variations: z.array(variationSchema).optional(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -47,18 +55,24 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit }) => {
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData ? { ...initialData } : {
+    defaultValues: initialData ? { ...initialData, variations: initialData.variations || [] } : {
       name: '',
       price: 0,
       category: '',
       imageUrl: '',
       isAvailable: true,
+      variations: [],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'variations',
   });
   
   React.useEffect(() => {
     if (initialData) {
-        form.reset(initialData);
+        form.reset({ ...initialData, variations: initialData.variations || [] });
         setImagePreview(initialData.imageUrl);
     }
   }, [initialData, form]);
@@ -173,14 +187,64 @@ const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit }) => {
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preço (MZN)</FormLabel>
+                  <FormLabel>Preço Base (MZN)</FormLabel>
+                   <FormDescription>Usado se não houver variações. Se houver variações, este preço é ignorado.</FormDescription>
                   <FormControl>
-                    <Input type="number" step="0.50" placeholder="Ex: 6.50" {...field} />
+                    <Input type="number" step="0.50" placeholder="Ex: 150" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <Separator />
+
+            <div>
+              <FormLabel>Variações de Preço</FormLabel>
+              <FormDescription>Adicione tamanhos diferentes como "Pote Médio" ou "Pote Grande".</FormDescription>
+              <div className="space-y-4 mt-2">
+                {fields.map((field, index) => (
+                   <div key={field.id} className="flex items-end gap-2 p-3 border rounded-md">
+                     <FormField
+                       control={form.control}
+                       name={`variations.${index}.name`}
+                       render={({ field }) => (
+                         <FormItem className="flex-grow">
+                           <FormLabel className="text-xs">Nome da Variação</FormLabel>
+                           <FormControl>
+                             <Input placeholder="Pote Médio" {...field} />
+                           </FormControl>
+                           <FormMessage />
+                         </FormItem>
+                       )}
+                     />
+                     <FormField
+                       control={form.control}
+                       name={`variations.${index}.price`}
+                       render={({ field }) => (
+                         <FormItem>
+                           <FormLabel className="text-xs">Preço (MZN)</FormLabel>
+                           <FormControl>
+                             <Input type="number" step="0.50" placeholder="250" {...field} />
+                           </FormControl>
+                           <FormMessage />
+                         </FormItem>
+                       )}
+                     />
+                     <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}>
+                        <Trash2 className="h-4 w-4" />
+                     </Button>
+                   </div>
+                ))}
+              </div>
+              <Button type="button" variant="outline" size="sm" className="mt-4" onClick={() => append({ name: '', price: 0 })}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Adicionar Variação
+              </Button>
+            </div>
+
+            <Separator />
+            
             <FormField
               control={form.control}
               name="category"

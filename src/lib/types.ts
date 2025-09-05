@@ -1,7 +1,14 @@
+
+export interface Variation {
+  name: string;
+  price: number;
+}
+
 export interface Product {
   id: string | number; // Firestore uses string IDs
   name: string;
-  price: number;
+  price: number; // Default price, used if no variations
+  variations?: Variation[];
   imageUrl: string;
   category: string;
   isAvailable: boolean;
@@ -9,6 +16,7 @@ export interface Product {
 
 export interface CartItem extends Product {
   quantity: number;
+  variation?: Variation; // Which variation was chosen
 }
 
 export interface Order {
@@ -16,7 +24,13 @@ export interface Order {
   customerName: string;
   phone: string;
   deliveryAddress: string;
-  items: CartItem[];
+  items: Array<{
+    id: string | number;
+    quantity: number;
+    name: string;
+    price: number;
+    variationName?: string;
+  }>;
   total: number;
   status: 'pending' | 'preparing' | 'ready';
   createdAt: Date;

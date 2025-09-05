@@ -299,7 +299,7 @@ const AdminDashboard = () => {
     try {
         if(editingProduct && editingProduct.id) {
             // Update existing product
-            const productRef = doc(db, 'products', editingProduct.id);
+            const productRef = doc(db, 'products', editingProduct.id as string);
             await updateDoc(productRef, productData);
             toast({ title: 'Sucesso!', description: 'Produto atualizado.' });
         } else {
@@ -441,7 +441,12 @@ const AdminDashboard = () => {
                                       </label>
                                   </div>
                                 </TableCell>
-                                <TableCell className="text-right">{product.price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}</TableCell>
+                                <TableCell className="text-right">
+                                  {product.variations && product.variations.length > 0 
+                                      ? `${product.variations[0].price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })} +`
+                                      : product.price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })
+                                  }
+                                </TableCell>
                                 <TableCell className="flex justify-center gap-2">
                                     <Button variant="ghost" size="icon" onClick={() => handleEditProduct(product)}>
                                         <Edit className="h-4 w-4" />
