@@ -34,5 +34,5 @@ export interface Order {
   total: number;
   status: 'pending' | 'preparing' | 'ready';
   createdAt: Date;
-  orderId?: string; // Human-readable/temporary ID
+  orderId: string; // Human-readable/temporary ID
 }

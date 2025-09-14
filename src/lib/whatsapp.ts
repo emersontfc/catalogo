@@ -41,7 +41,7 @@ export const generateWhatsAppLink = (
   const adminLink = `${getBaseUrl()}/admin`;
 
   let message = `*Olá, Drink It! Gostaria de fazer um novo pedido.*\n\n`;
-  message += `*ID do Pedido:* ${orderId}\n`
+  message += `*ID do Pedido:* ${orderId}\n`;
   message += `*Data e Hora:* ${orderTime}\n\n`;
   message += `*Detalhes do Cliente:*\n`;
   message += `*Nome:* ${customer.fullName}\n`;

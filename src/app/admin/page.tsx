@@ -207,9 +207,9 @@ const AdminDashboard = () => {
         
         let message = '';
         if (newStatus === 'preparing') {
-            message = `Olá *${order.customerName}*! Seu pedido *#${order.id.slice(0, 6)}* da Drink It já está em preparação. Em breve estará pronto!`;
+            message = `Olá *${order.customerName}*! Seu pedido *${order.orderId}* da Drink It já está em preparação. Em breve estará pronto!`;
         } else if (newStatus === 'ready') {
-            message = `Olá *${order.customerName}*! Seu pedido *#${order.id.slice(0, 6)}* da Drink It está pronto!\n\n` +
+            message = `Olá *${order.customerName}*! Seu pedido *${order.orderId}* da Drink It está pronto!\n\n` +
                       `*Por favor, efetue o pagamento no levantamento* via M-Pesa, e-Mola ou em numerário para um dos seguintes contactos:\n\n` +
                       `*856727539* (Gerson Joaquim Filipe Charles)\n` +
                       `*869059082* (Gerson Joaquim Filipe Charles)\n\n` +

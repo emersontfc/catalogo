@@ -110,30 +110,37 @@ export function CheckoutDialog({ isOpen, onOpenChange }: CheckoutDialogProps) {
     }
     
     try {
-        const orderId = `pedido-${Math.random().toString(36).substring(2, 8)}`;
+        const orderId = `#${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
         
         let customerPhone = data.phone.replace(/\s+/g, '');
         if (!customerPhone.startsWith('258')) {
             customerPhone = '258' + customerPhone;
         }
 
+        const orderData = {
+          customerName: data.fullName,
+          phone: customerPhone,
+          deliveryAddress: data.deliveryAddress,
+          items: cartItems.map((item) => {
+              const orderItem: any = {
+                id: (item.id as string).split('_')[0],
+                quantity: item.quantity,
+                name: item.name,
+                price: item.price,
+              };
+              if (item.variation?.name) {
+                orderItem.variationName = item.variation.name;
+              }
+              return orderItem;
+          }),
+          total: totalPrice,
+          status: 'pending' as const,
+          createdAt: serverTimestamp(),
+          orderId: orderId,
+        };
+
         // Save order to Firestore
-        await addDoc(collection(db, 'orders'), {
-            customerName: data.fullName,
-            phone: customerPhone, // Save standardized phone
-            deliveryAddress: data.deliveryAddress,
-            items: cartItems.map((item) => ({
-                id: (item.id as string).split('_')[0], // Extract original product ID
-                quantity: item.quantity, 
-                name: item.name, 
-                price: item.price, 
-                variationName: item.variation?.name 
-            })),
-            total: totalPrice,
-            status: 'pending',
-            createdAt: serverTimestamp(),
-            orderId: orderId, // The temporary human-readable ID
-        });
+        await addDoc(collection(db, 'orders'), orderData);
         
         // Generate WhatsApp link
         const whatsappLink = generateWhatsAppLink({ ...data, phone: customerPhone }, cartItems, totalPrice, businessPhoneNumber, orderId);

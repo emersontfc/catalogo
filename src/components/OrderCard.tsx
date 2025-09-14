@@ -76,7 +76,7 @@ const OrderCard = ({ order, onStatusChange, onDelete }: OrderCardProps) => {
       <Card className="overflow-hidden flex flex-col h-full">
         <CardHeader className="flex flex-row items-start bg-muted/50 px-6 py-4">
           <div className="flex-grow">
-            <CardTitle className="text-xl font-headline mb-1">Pedido #{order.id.slice(0, 6)}</CardTitle>
+            <CardTitle className="text-xl font-headline mb-1">Pedido {order.orderId}</CardTitle>
             <CardDescription>{order.customerName}</CardDescription>
             <p className="text-sm text-muted-foreground">{order.deliveryAddress}</p>
             <p className="text-sm text-muted-foreground">{order.phone}</p>
