@@ -122,12 +122,12 @@ export function CheckoutDialog({ isOpen, onOpenChange }: CheckoutDialogProps) {
             customerName: data.fullName,
             phone: customerPhone, // Save standardized phone
             deliveryAddress: data.deliveryAddress,
-            items: cartItems.map(({id, quantity, name, price, variation}) => ({
-                id, 
-                quantity, 
-                name, 
-                price, 
-                variationName: variation?.name 
+            items: cartItems.map((item) => ({
+                id: (item.id as string).split('_')[0], // Extract original product ID
+                quantity: item.quantity, 
+                name: item.name, 
+                price: item.price, 
+                variationName: item.variation?.name 
             })),
             total: totalPrice,
             status: 'pending',
